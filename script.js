@@ -3,19 +3,19 @@ import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { createDialogSystem } from "https://gorgussillygoose.github.io/SillyGooser/src/js/dialog.js";
 
 const reasons = [
-  "I love that even on your most tired days, you still make space for me — from sleepy little messages to waiting up for me when you really should be asleep. It makes the distance feel a lot smaller.",
-  "I love your cute chaos. The soil bags, the grow lights, the new plants, and your ever-expanding Audrey jungle somehow all feel exactly right on you.",
-  "I love our stupid little language — bao bao, grandma, nerd, gorgus, silly goose — and how we can go from being sweet to completely ridiculous in about three seconds.",
-  "I love how natural it feels to care for each other, even from far away. In all the tiny daily ways, serious or silly, you make me feel trusted, close to you, and part of your life.",
-  "I love making future plans with you, even when we overanalyse everything. Comparing cave hotels, arguing about the better room and the better view, and you accusing me of choosing one because of the bathtub 😜 — I love all of it.",
-  "I love that when I think about us, I can already picture Göreme — cave rooms, good views, probably too much teasing, and finally no screen between us. Thinking about that trip makes me ridiculously happy.",
-  "And I love that our future already feels real to me. Maybe Göreme first, maybe one day a home that slowly turns into Audrey's jungle — whatever it looks like, the best part of it is simply that it would be with you.",
+  "I love that one random night in Hanoi somehow became all of this. You told me what felt like your whole life, talked enough for both of us 😁, and somehow being with you already felt strangely easy. I had no idea that night that I'd still be happily listening to your yapping months later, or that the most unexpected surprise at the end of 2025 would become one of the greatest surprises of my life. ❤️",
+  "I love that you let me be part of your everyday life. The normal things, the funny things, the stressful things, and the completely unnecessary little updates — yes, even the poopie updates 💩. Those ordinary little moments are secretly some of my favourite parts of us.",
+  "I love our sleepy calls. When you try to be strong and insist you're 'not sleepyyy', but I can already hear you getting sleepy. I say you'll be asleep in five minutes and somehow you're gone thirty seconds later 😭. Or the complete opposite: adrenaline Audrey starts yapping so much that suddenly you're not sleepy anymore. Somehow even falling asleep together through a screen became one of our little things. ❤️",
+  "I love listening to you yap. About work, plants, Taylor, random people, things you saw, things that annoyed you… I love being the person you want to tell all those little things to. Even when you tell me the same story twice 😁.",
+  "I love how you can make Taylor appear in literally any conversation with absolutely no warning. Somehow I've learned that being with you also means living in the Taylor Swift extended universe. And apparently you're slowly turning me into a Swiftie too 😬😬❤️.",
+  "I love your chaotic little adventures. Even getting coffee somehow becomes an adventure for you — going up and down the lift, questionable parking decisions, traffic, Chinese road rage… and somehow you're still smiling or singing along afterwards. 😂 I genuinely don't know how you do it.",
+  "I love how cute you get when you're genuinely excited about something. You start talking faster, tell me every tiny detail, and somehow I just end up smiling while listening to you. I love all your little Audrey things — your expressions, your random sounds, the things you say, your dramatic reactions, and all those tiny habits that make you you, even if they probably don't feel special to you anymore. They are to me. ❤️",
 ];
 
 const finalLines = [
   "七夕快乐, bao bao ❤️",
-  "Göreme is getting closer. And I hope it's only one of many places we'll find ourselves together.",
-  "One trip, one home, one ridiculous plant jungle at a time. 🪿❤️🐶",
+  "Göreme is getting closer, and I hope it's only one of many places we'll find ourselves together.",
+  "I miss you, bao bao. I can't wait to see you soon. 🪿❤️🐶",
 ];
 
 const leavesVS = /*glsl*/`
@@ -87,9 +87,11 @@ renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
 const scene = new THREE.Scene();
+// Keep the UI fixed while lowering the complete 3D asset layer.
+scene.position.y = -0.48;
 const camera = new THREE.PerspectiveCamera(35, 1, 0.01, 100);
-camera.position.set(-7, 1.4, -12);
-camera.lookAt(0.55, 0.65, 0.35);
+camera.position.set(-3.9, 3.2, -13.3);
+camera.lookAt(0.55, 0.72, 0.35);
 
 const loader = new GLTFLoader();
 const textureLoader = new THREE.TextureLoader();
@@ -108,8 +110,28 @@ const warmLight = new THREE.PointLight(0xff866e, 0, 10, 2);
 warmLight.position.set(1.0, 1.2, 0.0);
 scene.add(warmLight);
 
-const dialogSystem = createDialogSystem({ camera, talkDistance: 0 });
-const dialogGif = "https://gorgussillygoose.github.io/SillyGooser/src/assets/ui/Dog_talk_102x102.gif";
+const dialogSystem = createDialogSystem({ camera, talkDistance: 0, typeSpeed: 38 });
+const dialogGif = "./assets/ui/Dog_talk_102x102.gif";
+const dialogUi = document.querySelector("#dog-dialog-ui");
+const dialogFrame = dialogUi?.querySelector(".dialog-shell-frame");
+const dialogTextElement = dialogUi?.querySelector("#dialog-text");
+if (dialogTextElement && typeof MutationObserver !== "undefined") {
+  const dialogTextObserver = new MutationObserver(() => {
+    dialogTextElement.scrollTop = dialogTextElement.scrollHeight;
+  });
+  dialogTextObserver.observe(dialogTextElement, { childList: true, characterData: true, subtree: true });
+}
+if (dialogFrame) {
+  dialogFrame.src = "./assets/ui/Combined_Dialogbox.png";
+}
+dialogUi?.addEventListener("click", (event) => {
+  if (!dialogSystem.isOpen()) return;
+  if (event.target.closest(".dialog-choice, .dialog-name-input")) return;
+  event.preventDefault();
+  const continueButton = dialogUi.querySelector('[data-dialog-action="continue"]');
+  if (!continueButton || continueButton.closest("#dialog-continue")?.hidden) return;
+  continueButton.click();
+});
 
 const state = {
   bench: null,
@@ -251,6 +273,7 @@ bushLayers.forEach((layer, layerIndex) => {
 });
 scene.add(bushRing);
 
+
 async function loadTree() {
   const obj = await loader.loadAsync("./assets/models/tree.glb");
   const pole = obj.scene.getObjectByName("Pole");
@@ -290,6 +313,8 @@ async function loadTree() {
   state.tree.add(pole, leaves);
   state.leaves = leaves;
   state.leafGeometry = leaf.geometry;
+  state.tree.position.set(-1.55, -.05, -.45);
+  state.tree.scale.setScalar(.74);
   scene.add(state.tree);
 }
 
@@ -320,7 +345,7 @@ async function loadDog() {
   const scale = .68 * 3.5 / Math.max(size.x, size.y, size.z);
   state.dog.scale.set(scale * 1.1, scale, scale);
   state.dog.position.set(1 - center.x * scale, -.35 - box.min.y * scale, -1.4 - center.z * scale);
-  state.dog.rotation.y = 220 * Math.PI / 180;
+  state.dog.rotation.y = 232 * Math.PI / 180;
   if (obj.animations?.length) {
     const mixer = new THREE.AnimationMixer(state.dog);
     mixer.clipAction(obj.animations[0]).play();
@@ -336,8 +361,8 @@ async function loadGoose() {
   toonify(state.goose);
   const box = new THREE.Box3().setFromObject(state.goose);
   const size = box.getSize(new THREE.Vector3());
-  const scale = .65 / Math.max(size.x, size.y, size.z);
-  state.goose.scale.set(scale * .9, scale, scale);
+  const scale = 3.0 / Math.max(size.x, size.y, size.z);
+  state.goose.scale.set(scale, scale, scale);
   const mixer = new THREE.AnimationMixer(state.goose);
   const sitClip = obj.animations.find((clip) => /sit|seat|perch|rest/i.test(clip.name));
   const idleClip = obj.animations.find((clip) => /idle/i.test(clip.name));
@@ -356,12 +381,14 @@ function trySeatCharacters() {
   if (state.dog && state.dog.parent !== state.bench) {
     if (state.dog.parent) state.dog.removeFromParent();
     state.bench.add(state.dog);
+    state.dog.position.set(.75, -.12, -1.8);
+    state.dog.rotation.y = 224 * Math.PI / 180;
   }
   if (state.goose && state.goose.parent !== state.bench) {
     if (state.goose.parent) state.goose.removeFromParent();
     state.bench.add(state.goose);
-    state.goose.position.set(-.58, -.1, -.5);
-    state.goose.rotation.y = 210 * Math.PI / 180;
+    state.goose.position.set(-.7, -.12, .7);
+    state.goose.rotation.y = 195 * Math.PI / 180;
   }
 }
 
@@ -381,12 +408,33 @@ function createFireflies() {
 createFireflies();
 
 function createFallingLeaves() {
-  if (!state.leafGeometry || state.fallingLeaves.length) return;
+  if (!state.leafGeometry || !state.tree || state.fallingLeaves.length) return;
+  state.tree.updateMatrixWorld(true);
+  const treeBounds = new THREE.Box3().setFromObject(state.tree);
+  const treeSize = treeBounds.getSize(new THREE.Vector3());
+  const canopyMin = new THREE.Vector3(
+    treeBounds.min.x + treeSize.x * .18,
+    treeBounds.min.y + treeSize.y * .48,
+    treeBounds.min.z + treeSize.z * .18
+  );
+  const canopySize = new THREE.Vector3(
+    treeSize.x * .64,
+    treeSize.y * .48,
+    treeSize.z * .64
+  );
   for (let i = 0; i < 26; i++) {
     const mat = new THREE.MeshToonMaterial({ color: [0xb45252, 0xd06b5d, 0xd3a068, 0xe3b879][i % 4], side: THREE.DoubleSide, transparent: true, opacity: 0 });
     const leaf = new THREE.Mesh(state.leafGeometry, mat);
     leaf.scale.setScalar(.75 + (i % 4) * .09);
-    leaf.position.set(-2 + ((i * 41) % 400) / 100, 1.0 + ((i * 53) % 300) / 100, -.7 + ((i * 31) % 220) / 100);
+    const seedX = ((i * 41) % 97) / 97;
+    const seedY = ((i * 53) % 89) / 89;
+    const seedZ = ((i * 31) % 83) / 83;
+    leaf.position.set(
+      canopyMin.x + seedX * canopySize.x,
+      canopyMin.y + seedY * canopySize.y,
+      canopyMin.z + seedZ * canopySize.z
+    );
+    leaf.userData.resetPosition = leaf.position.clone();
     leaf.userData.speed = .13 + (i % 5) * .025;
     leaf.userData.phase = i * .63;
     scene.add(leaf);
@@ -440,7 +488,6 @@ const qixiBridge = document.querySelector("#qixiBridge");
 const balloons = document.querySelector("#balloons");
 const finalBadge = document.querySelector("#finalBadge");
 const title = document.querySelector("#qixiTitle");
-
 stars.forEach((star) => {
   star.addEventListener("click", () => {
     const index = Number(star.dataset.index);
@@ -483,7 +530,6 @@ function applyStage(stage) {
 function startFinale() {
   if (state.finaleStarted) return;
   state.finaleStarted = true;
-  balloons.classList.add("is-visible");
   finalBadge.hidden = false;
   title.classList.add("is-final");
   warmLight.intensity = 2.6;
@@ -492,25 +538,23 @@ function startFinale() {
       npcName: "DOGGO",
       gifSrc: dialogGif,
       postCloseAction: () => {
+        balloons.classList.add("is-visible");
         hintText.textContent = "Happy Qixi, bao bao ❤️";
       },
     });
   }, 700);
 }
 
-window.addEventListener("keydown", (event) => dialogSystem.handleKeyDown(event));
-window.addEventListener("keyup", (event) => dialogSystem.handleKeyUp(event));
-
 function resize() {
   renderer.setSize(window.innerWidth, window.innerHeight, false);
   camera.aspect = window.innerWidth / Math.max(window.innerHeight, 1);
   camera.updateProjectionMatrix();
   if (window.innerWidth < window.innerHeight) {
-    camera.position.set(-8.6, 2.2, -15.6);
-    camera.lookAt(.45, .75, .2);
+    camera.position.set(-5.3, 4.5, -16.8);
+    camera.lookAt(.45, .72, .2);
   } else {
-    camera.position.set(-7, 1.4, -12);
-    camera.lookAt(.55, .65, .35);
+    camera.position.set(-3.9, 3.2, -13.3);
+    camera.lookAt(.55, .72, .35);
   }
 }
 window.addEventListener("resize", resize);
@@ -518,7 +562,7 @@ resize();
 
 Promise.allSettled([loadTree(), loadBench(), loadDog(), loadGoose()]).then(() => {
   createFallingLeaves();
-  state.fallingLeaves.forEach((leaf) => { leaf.material.opacity = 0; });
+  state.fallingLeaves.forEach((leaf) => { leaf.material.opacity = .72; });
   state.locked = false;
   clickableStars.classList.remove("is-loading");
   hintText.textContent = "Find the seven stars ✦";
@@ -545,7 +589,9 @@ function animate() {
     leaf.position.x += Math.sin(elapsed * .65 + leaf.userData.phase) * delta * .07;
     leaf.rotation.x += delta * (.15 + (i % 3) * .05);
     leaf.rotation.z += delta * (.22 + (i % 4) * .04);
-    if (leaf.position.y < .05) leaf.position.y = 3.2 + (i % 7) * .18;
+    if (leaf.position.y < .05) {
+      leaf.position.copy(leaf.userData.resetPosition);
+    }
   });
 
   renderer.render(scene, camera);
