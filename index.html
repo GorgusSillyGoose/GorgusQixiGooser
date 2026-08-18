@@ -1,66 +1,62 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <meta name="theme-color" content="#100a22" />
-    <title>7 little things I love about you</title>
-    <link rel="stylesheet" href="./style.css" />
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#2b233e" />
+  <title>Qixi · 7 little things I love about you</title>
+  <link rel="stylesheet" href="https://gorgussillygoose.github.io/SillyGooser/src/css/dialog.css" />
+  <link rel="stylesheet" href="./style.css" />
+  <script async src="https://ga.jspm.io/npm:es-module-shims@1.6.3/dist/es-module-shims.js" crossorigin="anonymous"></script>
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://unpkg.com/three@0.154.0/build/three.module.js",
+      "three/addons/": "https://unpkg.com/three@0.154.0/examples/jsm/"
+    }
+  }
+  </script>
+</head>
+<body>
+  <main id="app" class="qixi-app">
+    <canvas id="scene" class="scene-canvas" aria-hidden="true"></canvas>
 
-    <script async src="https://ga.jspm.io/npm:es-module-shims@1.6.3/dist/es-module-shims.js" crossorigin="anonymous"></script>
-    <script type="importmap">
-      {
-        "imports": {
-          "three": "https://unpkg.com/three@0.154.0/build/three.module.js",
-          "three/addons/": "https://unpkg.com/three@0.154.0/examples/jsm/"
-        }
-      }
-    </script>
-  </head>
-  <body>
-    <main class="qixi-shell" aria-live="polite">
-      <div class="moon-glow" aria-hidden="true"></div>
-      <div class="sky-glow" aria-hidden="true"></div>
-      <div id="scene" class="scene" aria-hidden="true"></div>
+    <header class="qixi-title" id="qixiTitle">
+      <div class="qixi-kicker">QIXI · 七夕</div>
+      <h1>7 little things I love about you</h1>
+      <p id="hintText">Find the seven stars ✦</p>
+      <div class="counter"><span id="counterValue">0</span> / 7</div>
+    </header>
 
-      <section class="intro" id="intro">
-        <p class="eyebrow">QIXI · 七夕</p>
-        <h1>7 little things<br />I love about<br />you</h1>
-        <p class="intro-copy">I couldn't cross the distance tonight,<br />so I left seven little stars for you.</p>
-        <button class="start-button" id="startButton" type="button">find the first star ♥</button>
-      </section>
+    <div id="ambientStars" class="ambient-stars" aria-hidden="true"></div>
+    <div id="qixiBridge" class="qixi-bridge" aria-hidden="true"></div>
+    <div id="warmHalo" class="warm-halo" aria-hidden="true"></div>
 
-      <div class="stars" id="stars" aria-label="Seven reasons I love you" hidden>
-        <button class="love-star love-star-1" type="button" data-index="0" aria-label="Reason 1"><span>✦</span></button>
-        <button class="love-star love-star-2" type="button" data-index="1" aria-label="Reason 2"><span>✦</span></button>
-        <button class="love-star love-star-3" type="button" data-index="2" aria-label="Reason 3"><span>✦</span></button>
-        <button class="love-star love-star-4" type="button" data-index="3" aria-label="Reason 4"><span>✦</span></button>
-        <button class="love-star love-star-5" type="button" data-index="4" aria-label="Reason 5"><span>✦</span></button>
-        <button class="love-star love-star-6" type="button" data-index="5" aria-label="Reason 6"><span>✦</span></button>
-        <button class="love-star love-star-7" type="button" data-index="6" aria-label="Reason 7"><span>✦</span></button>
-      </div>
+    <div id="clickableStars" class="clickable-stars" aria-label="Seven reasons I love you">
+      <button class="love-star star-1" type="button" data-index="0" aria-label="Reason 1"><span>✦</span></button>
+      <button class="love-star star-2" type="button" data-index="1" aria-label="Reason 2"><span>✦</span></button>
+      <button class="love-star star-3" type="button" data-index="2" aria-label="Reason 3"><span>✦</span></button>
+      <button class="love-star star-4" type="button" data-index="3" aria-label="Reason 4"><span>✦</span></button>
+      <button class="love-star star-5" type="button" data-index="4" aria-label="Reason 5"><span>✦</span></button>
+      <button class="love-star star-6" type="button" data-index="5" aria-label="Reason 6"><span>✦</span></button>
+      <button class="love-star star-7" type="button" data-index="6" aria-label="Reason 7"><span>✦</span></button>
+    </div>
 
-      <section class="reason-panel" id="reasonPanel" hidden>
-        <div class="progress-row">
-          <span id="progressLabel">0 / 7</span>
-          <div class="progress-dots" id="progressDots" aria-hidden="true"></div>
-        </div>
-        <p class="reason-number" id="reasonNumber"></p>
-        <p class="reason-text" id="reasonText"></p>
-        <button class="close-reason" id="closeReason" type="button">keep looking ✦</button>
-      </section>
+    <div id="balloons" class="balloons" aria-hidden="true">
+      <span class="balloon balloon-a"><i></i></span>
+      <span class="balloon balloon-b"><i></i></span>
+      <span class="balloon balloon-c"><i></i></span>
+      <span class="balloon balloon-d"><i></i></span>
+    </div>
 
-      <section class="ending" id="ending" hidden>
-        <div class="ending-heart" aria-hidden="true">♥</div>
-        <p class="eyebrow">7 / 7</p>
-        <h2>七夕快乐 ❤️</h2>
-        <p>Happy Qixi, bao bao.</p>
-        <p class="ending-small">No matter how much distance sits between us,<br />I'd still choose you — in every city, every plan, every future.</p>
-      </section>
+    <div id="finalBadge" class="final-badge" hidden>
+      <div>七夕快乐 ❤️</div>
+      <small>bao bao</small>
+    </div>
 
-      <p class="loading" id="loading">waking up goose, doggo, tree & bench...</p>
-    </main>
+    <div id="loading" class="loading">bringing the old park back...</div>
+  </main>
 
-    <script type="module" src="./script.js"></script>
-  </body>
+  <script type="module" src="./script.js"></script>
+</body>
 </html>
