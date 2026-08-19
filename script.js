@@ -3,19 +3,19 @@ import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { createDialogSystem } from "https://gorgussillygoose.github.io/SillyGooser/src/js/dialog.js";
 
 const reasons = [
-  "I love that one random night in Hanoi somehow became all of this. You told me what felt like your whole life, talked enough for both of us 😁, and somehow being with you already felt strangely easy. I had no idea that night that I'd still be happily listening to your yapping months later, or that the most unexpected surprise at the end of 2025 would become one of the greatest surprises of my life. ❤️",
-  "I love that you let me be part of your everyday life. The normal things, the funny things, the stressful things, and the completely unnecessary little updates — yes, even the poopie updates 💩. Those ordinary little moments are secretly some of my favourite parts of us.",
-  "I love our sleepy calls. When you try to be strong and insist you're 'not sleepyyy', but I can already hear you getting sleepy. I say you'll be asleep in five minutes and somehow you're gone thirty seconds later 😭. Or the complete opposite: adrenaline Audrey starts yapping so much that suddenly you're not sleepy anymore. Somehow even falling asleep together through a screen became one of our little things. ❤️",
-  "I love listening to you yap. About work, plants, Taylor, random people, things you saw, things that annoyed you… I love being the person you want to tell all those little things to. Even when you tell me the same story twice 😁.",
+  "I love that one random night in Hanoi somehow became all of this. You told me what felt like your whole life, talked enough for both of us 😁, and somehow being with you already felt strangely easy. I had no idea that night that I'd still be happily listening to your yapping months later, or that the most unexpected surprise at the end of 2025 would become one of the greatest surprises I had 🪿❤️.",
+  "I love that you let me be part of your everyday life. The normal things, the funny things, the stressful things, and even the completely unnecessary little updates. yes, even the poopie updates 💩. Those little and sometimes (little ordinary hihi) moments are secretly becoming some of my favourite parts of us.",
+  "I love our sleepy calls. When you try to be strong and insist you're 'not sleepyyy', but I can already tell you getting sleepy. I say you'll be asleep in five minutes and somehow you're gone thirty seconds later 😭. Or the complete opposite: adrenaline Audrey starts yapping so much that suddenly you're not sleepy anymore. Somehow even falling asleep together through a screen became one of our little things. ❤️",
+  "I love listening to you yap. About work, plants, Taylor, random people, things you saw, things that annoyed you… I love being the person you want to tell all those little things to. Even if you would tell me the same story twice 😁.",
   "I love how you can make Taylor appear in literally any conversation with absolutely no warning. Somehow I've learned that being with you also means living in the Taylor Swift extended universe. And apparently you're slowly turning me into a Swiftie too 😬😬❤️.",
-  "I love your chaotic little adventures. Even getting coffee somehow becomes an adventure for you — going up and down the lift, questionable parking decisions, traffic, Chinese road rage… and somehow you're still smiling or singing along afterwards. 😂 I genuinely don't know how you do it.",
-  "I love how cute you get when you're genuinely excited about something. You start talking faster, tell me every tiny detail, and somehow I just end up smiling while listening to you. I love all your little Audrey things — your expressions, your random sounds, the things you say, your dramatic reactions, and all those tiny habits that make you you, even if they probably don't feel special to you anymore. They are to me. ❤️",
+  "I love your chaotic little adventures. Even getting coffee somehow becomes an adventure with you, going up and down the lift twice, questionable parking decisions, traffic, Chinese road rage… and somehow you're still smiling or singing along afterwards. Just a girl 😂",
+  "I love how cute you get when you're genuinely excited about something. You start talking faster, tell me every tiny detail, and somehow I just end up smiling while listening to you. I love all your little \"Audrey\" things, your expressions, your random sounds, the things you say, your dramatic reactions, and all those tiny habits that make you you, even if they probably don't feel special to you anymore. They are to me. ❤️",
 ];
 
 const finalLines = [
   "七夕快乐, bao bao ❤️",
   "Göreme is getting closer, and I hope it's only one of many places we'll find ourselves together.",
-  "I miss you, bao bao. I can't wait to see you soon. 🪿❤️🐶",
+  "I miss you and I love you, bao bao. I can't wait to see you soon. 🪿❤️🐶",
 ];
 
 const leavesVS = /*glsl*/`
